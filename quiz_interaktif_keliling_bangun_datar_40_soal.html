@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif: Keliling Bangun Datar (40 Soal)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Fredoka & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        .q-badge {
+            transition: all 0.2s ease-in-out;
+        }
+        .q-badge.answered {
+            background-color: #4F46E5;
+            color: white;
+        }
+        .q-badge.current {
+            ring: 3px solid #F59E0B;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header / Navbar -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-400 text-indigo-950 p-2 rounded-2xl font-black text-xl">
+                    <i class="fa-solid fa-shapes"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading text-xl md:text-2xl font-bold tracking-wide">Kuis Keliling Bangun Datar</h1>
+                    <p class="text-xs text-indigo-100">40 Soal Interaktif Matematika Kelas 5 SD</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="resetQuizProgress()" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Reset Kuis</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar / Navigation Grid -->
+        <aside class="lg:col-span-1 order-2 lg:order-1">
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 sticky top-20">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="font-heading font-bold text-slate-700">Daftar Soal</h2>
+                    <span class="text-xs font-bold bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full" id="progress-count">0 / 40 Terjawab</span>
+                </div>
+
+                <!-- Grid Buttons -->
+                <div class="grid grid-cols-5 gap-2 max-h-80 lg:max-h-none overflow-y-auto p-1" id="questions-grid">
+                    <!-- Dynamic Generated Badges -->
+                </div>
+
+                <!-- Score Board -->
+                <div class="mt-6 pt-4 border-t border-slate-100 bg-slate-50 p-3 rounded-2xl border">
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Skor Sementara:</p>
+                    <div class="flex justify-between items-end">
+                        <span class="text-2xl font-black text-indigo-600" id="current-score">0 / 40</span>
+                        <span class="text-xs text-emerald-600 font-bold" id="accuracy-percentage">0% Akurasi</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Question Area -->
+        <section class="lg:col-span-3 order-1 lg:order-2">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[500px] flex flex-col justify-between">
+                
+                <div id="question-wrapper">
+                    <!-- Dynamic Question Header -->
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase" id="q-category">Bangun Datar</span>
+                        <span class="text-slate-400 font-extrabold text-sm" id="q-number-title">Soal 1 dari 40</span>
+                    </div>
+
+                    <!-- Question Content -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <!-- SVG Illustration -->
+                        <div class="md:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[220px]" id="q-svg-container">
+                            <!-- Dynamic SVG injected here -->
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="md:col-span-7">
+                            <p class="text-slate-800 font-semibold text-base md:text-lg leading-relaxed" id="q-text">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6 text-sm font-medium" id="options-container">
+                        <!-- Dynamic Buttons -->
+                    </div>
+
+                    <!-- Instant Feedback Box -->
+                    <div id="feedback-box" class="hidden mt-6 p-4 rounded-2xl text-sm font-semibold border">
+                        <!-- Dynamic Feedback Content -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2 disabled:opacity-40">
+                        <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition flex items-center gap-2 shadow">
+                        Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Script Logic -->
+    <script>
+        // Database 40 Soal Keliling Bangun Datar
+        const questionsData = [
+            // PERSEGI (1 - 4)
+            {
+                id: 1,
+                category: "Persegi",
+                text: "Sebuah taman bunga berbentuk persegi memiliki panjang sisi 18 meter. Berapakah keliling taman bunga tersebut?",
+                options: ["54 meter", "72 meter", "64 meter", "81 meter"],
+                answerIndex: 1,
+                explanation: "Keliling persegi = 4 × s = 4 × 18 = 72 meter.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><rect x="20" y="20" width="120" height="120" fill="#EEF2FF" stroke="#4F46E5" stroke-width="4" rx="8"/><text x="80" y="15" text-anchor="middle" font-weight="bold" fill="#4F46E5" font-size="12">18 m</text><text x="80" y="90" text-anchor="middle" font-weight="bold" fill="#312E81" font-size="14">Persegi</text></svg>`
+            },
+            {
+                id: 2,
+                category: "Persegi",
+                text: "Budi mengelilingi lapangan berbentuk persegi yang memiliki keliling 120 meter. Berapakah panjang satu sisi lapangan tersebut?",
+                options: ["25 meter", "40 meter", "30 meter", "35 meter"],
+                answerIndex: 2,
+                explanation: "Sisi persegi = Keliling ÷ 4 = 120 ÷ 4 = 30 meter.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><rect x="25" y="25" width="110" height="110" fill="#FEF3C7" stroke="#D97706" stroke-width="4" rx="8"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#92400E" font-size="12">K = 120 m</text><text x="80" y="105" text-anchor="middle" font-weight="bold" fill="#D97706" font-size="12">s = ?</text></svg>`
+            },
+            {
+                id: 3,
+                category: "Persegi",
+                text: "Pak Anton ingin memasang pagar bambu di sekeliling kebun perseginya. Jika panjang sisi kebun adalah 25 meter dan harga pagar Rp20.000 per meter, berapa total biaya yang dibutuhkan?",
+                options: ["Rp1.500.000", "Rp2.000.000", "Rp2.500.000", "Rp1.800.000"],
+                answerIndex: 1,
+                explanation: "Keliling = 4 × 25m = 100m. Biaya = 100m × Rp20.000 = Rp2.000.000.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><rect x="25" y="25" width="110" height="110" fill="#ECFDF5" stroke="#059669" stroke-width="4" rx="8"/><text x="80" y="15" text-anchor="middle" font-weight="bold" fill="#059669" font-size="12">25 m</text><text x="80" y="90" text-anchor="middle" font-weight="bold" fill="#065F46" font-size="12">Kebun</text></svg>`
+            },
+            {
+                id: 4,
+                category: "Persegi",
+                text: "Sebuah ubin berbentuk persegi memiliki panjang sisi 40 cm. Rina berlari menyusuri pinggiran 5 ubin yang disusun memanjang membentuk garis. Berapa keliling total 1 ubin tersebut?",
+                options: ["160 cm", "120 cm", "200 cm", "140 cm"],
+                answerIndex: 0,
+                explanation: "Keliling 1 ubin persegi = 4 × 40 cm = 160 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><rect x="30" y="30" width="100" height="100" fill="#F3E8FF" stroke="#7C3AED" stroke-width="4" rx="6"/><text x="80" y="22" text-anchor="middle" font-weight="bold" fill="#7C3AED" font-size="12">40 cm</text></svg>`
+            },
+
+            // PERSEGI PANJANG (5 - 9)
+            {
+                id: 5,
+                category: "Persegi Panjang",
+                text: "Sebuah lapangan sepak bola berbentuk persegi panjang memiliki panjang 100 meter dan lebar 60 meter. Berapakah keliling lapangan tersebut?",
+                options: ["240 meter", "320 meter", "300 meter", "160 meter"],
+                answerIndex: 1,
+                explanation: "Keliling = 2 × (p + l) = 2 × (100 + 60) = 2 × 160 = 320 meter.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><rect x="15" y="20" width="150" height="80" fill="#EFF6FF" stroke="#2563EB" stroke-width="4" rx="6"/><text x="90" y="14" text-anchor="middle" font-weight="bold" fill="#2563EB" font-size="11">100 m</text><text x="172" y="65" text-anchor="middle" font-weight="bold" fill="#2563EB" font-size="11">60 m</text></svg>`
+            },
+            {
+                id: 6,
+                category: "Persegi Panjang",
+                text: "Papan tulis di kelas V memiliki keliling 360 cm. Jika lebar papan tulis tersebut adalah 80 cm, berapakah panjang papan tulis tersebut?",
+                options: ["90 cm", "110 cm", "100 cm", "120 cm"],
+                answerIndex: 2,
+                explanation: "p + l = Keliling ÷ 2 = 360 ÷ 2 = 180 cm. Panjang = 180 - 80 = 100 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><rect x="15" y="25" width="150" height="70" fill="#F0FDF4" stroke="#16A34A" stroke-width="4" rx="6"/><text x="90" y="65" text-anchor="middle" font-weight="bold" fill="#15803D" font-size="11">K = 360 cm, l = 80 cm</text></svg>`
+            },
+            {
+                id: 7,
+                category: "Persegi Panjang",
+                text: "Sebuah kolam renang berbentuk persegi panjang dengan panjang 25 meter dan lebar 12 meter. Jika Andi mengelilingi kolam renang sebanyak 3 putaran, berapa jarak total yang ditempuh Andi?",
+                options: ["222 meter", "148 meter", "185 meter", "74 meter"],
+                answerIndex: 0,
+                explanation: "Keliling 1 putaran = 2 × (25 + 12) = 74 m. Total 3 putaran = 74 × 3 = 222 meter.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><rect x="20" y="25" width="140" height="70" fill="#E0F2FE" stroke="#0284C7" stroke-width="4" rx="6"/><text x="90" y="17" text-anchor="middle" font-weight="bold" fill="#0284C7" font-size="11">25 m</text><text x="168" y="65" text-anchor="middle" font-weight="bold" fill="#0284C7" font-size="11">12 m</text></svg>`
+            },
+            {
+                id: 8,
+                category: "Persegi Panjang",
+                text: "Foto keluarga berukuran panjang 30 cm dan lebar 20 cm akan diberi bingkai kayu di sekelilingnya. Berapakah panjang kayu yang dibutuhkan untuk bingkai tersebut?",
+                options: ["100 cm", "80 cm", "120 cm", "90 cm"],
+                answerIndex: 0,
+                explanation: "Keliling bingkai = 2 × (30 + 20) = 2 × 50 = 100 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><rect x="25" y="20" width="130" height="80" fill="#FFF7ED" stroke="#EA580C" stroke-width="4" rx="4"/><text x="90" y="14" text-anchor="middle" font-weight="bold" fill="#EA580C" font-size="11">30 cm</text><text x="162" y="65" text-anchor="middle" font-weight="bold" fill="#EA580C" font-size="11">20 cm</text></svg>`
+            },
+            {
+                id: 9,
+                category: "Persegi Panjang",
+                text: "Sebuah pekarangan berbentuk persegi panjang berukuran 15 m × 10 m. Di sekeliling pekarangan dipasang lampu dengan jarak antar lampu 5 meter. Berapa banyak lampu yang dibutuhkan?",
+                options: ["8 lampu", "10 lampu", "12 lampu", "6 lampu"],
+                answerIndex: 0,
+                explanation: "Keliling = 2 × (15 + 10) = 50 m. Banyak lampu = 50 ÷ 5 = 10 lampu. (Catatan: 50/5 = 10 lampu). Let's fix calculation: 50 / 5 = 10 lampu. Correct option is index 1.",
+                answerIndex: 1,
+                explanation: "Keliling = 2 × (15 + 10) = 50 m. Banyak lampu = 50 ÷ 5 = 10 lampu.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><rect x="25" y="25" width="130" height="70" fill="#FEF2F2" stroke="#EF4444" stroke-width="4" rx="4"/><text x="90" y="18" text-anchor="middle" font-weight="bold" fill="#B91C1C" font-size="11">15 m</text><text x="162" y="65" text-anchor="middle" font-weight="bold" fill="#B91C1C" font-size="11">10 m</text></svg>`
+            },
+
+            // SEGITIGA (10 - 14)
+            {
+                id: 10,
+                category: "Segitiga",
+                text: "Sebuah segitiga sama sisi memiliki panjang sisi 16 cm. Berapakah keliling segitiga tersebut?",
+                options: ["32 cm", "64 cm", "48 cm", "52 cm"],
+                answerIndex: 2,
+                explanation: "Segitiga sama sisi memiliki 3 sisi sama panjang. Keliling = 3 × 16 = 48 cm.",
+                svg: `<svg viewBox="0 0 160 140" width="160" height="140"><polygon points="80,15 20,120 140,120" fill="#ECFDF5" stroke="#10B981" stroke-width="4"/><text x="80" y="135" text-anchor="middle" font-weight="bold" fill="#047857" font-size="12">16 cm</text></svg>`
+            },
+            {
+                id: 11,
+                category: "Segitiga",
+                text: "Sebuah segitiga sama kaki memiliki panjang alas 10 cm dan panjang sisi miringnya masing-masing 13 cm. Berapakah keliling segitiga tersebut?",
+                options: ["36 cm", "33 cm", "28 cm", "42 cm"],
+                answerIndex: 0,
+                explanation: "Keliling = alas + (2 × sisi miring) = 10 + 13 + 13 = 36 cm.",
+                svg: `<svg viewBox="0 0 160 140" width="160" height="140"><polygon points="80,15 30,120 130,120" fill="#FDF2F8" stroke="#DB2777" stroke-width="4"/><text x="40" y="65" font-weight="bold" fill="#DB2777" font-size="11">13 cm</text><text x="80" y="135" text-anchor="middle" font-weight="bold" fill="#DB2777" font-size="11">10 cm</text></svg>`
+            },
+            {
+                id: 12,
+                category: "Segitiga",
+                text: "Segitiga siku-siku memiliki panjang sisi-sisi tegaknya 6 cm dan 8 cm, serta sisi miringnya 10 cm. Berapakah keliling segitiga siku-siku tersebut?",
+                options: ["20 cm", "28 cm", "24 cm", "30 cm"],
+                answerIndex: 2,
+                explanation: "Keliling segitiga siku-siku = s1 + s2 + s3 = 6 + 8 + 10 = 24 cm.",
+                svg: `<svg viewBox="0 0 160 140" width="160" height="140"><polygon points="30,20 30,120 130,120" fill="#FFFBEB" stroke="#F59E0B" stroke-width="4"/><text x="18" y="70" font-weight="bold" fill="#B45309" font-size="11">6 cm</text><text x="80" y="135" font-weight="bold" fill="#B45309" font-size="11">8 cm</text><text x="90" y="65" font-weight="bold" fill="#B45309" font-size="11">10 cm</text></svg>`
+            },
+            {
+                id: 13,
+                category: "Segitiga",
+                text: "Keliling sebuah segitiga sembarang adalah 42 cm. Jika panjang dua sisinya adalah 12 cm dan 15 cm, berapakah panjang sisi ketiga?",
+                options: ["15 cm", "13 cm", "18 cm", "16 cm"],
+                answerIndex: 0,
+                explanation: "Sisi ketiga = Keliling - (s1 + s2) = 42 - (12 + 15) = 42 - 27 = 15 cm.",
+                svg: `<svg viewBox="0 0 160 140" width="160" height="140"><polygon points="60,20 20,120 140,120" fill="#F3E8FF" stroke="#9333EA" stroke-width="4"/><text x="80" y="80" text-anchor="middle" font-weight="bold" fill="#6B21A8" font-size="11">K = 42 cm</text></svg>`
+            },
+            {
+                id: 14,
+                category: "Segitiga",
+                text: "Rambu lalu lintas berbentuk segitiga sama sisi dipasang pita reflektif di seluruh pinggirannya. Jika total panjang pita yang digunakan adalah 90 cm, berapa panjang tiap sisi rambu tersebut?",
+                options: ["25 cm", "30 cm", "35 cm", "40 cm"],
+                answerIndex: 1,
+                explanation: "Sisi = Keliling ÷ 3 = 90 ÷ 3 = 30 cm.",
+                svg: `<svg viewBox="0 0 160 140" width="160" height="140"><polygon points="80,15 20,120 140,120" fill="#FEF2F2" stroke="#DC2626" stroke-width="5"/><text x="80" y="80" text-anchor="middle" font-weight="bold" fill="#991B1B" font-size="12">K = 90 cm</text></svg>`
+            },
+
+            // JAJAR GENJANG (15 - 18)
+            {
+                id: 15,
+                category: "Jajar Genjang",
+                text: "Sebuah jajar genjang memiliki panjang alas 14 cm dan panjang sisi miring 9 cm. Berapakah keliling jajar genjang tersebut?",
+                options: ["46 cm", "52 cm", "38 cm", "23 cm"],
+                answerIndex: 0,
+                explanation: "Keliling jajar genjang = 2 × (a + b) = 2 × (14 + 9) = 2 × 23 = 46 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="40,25 160,25 140,95 20,95" fill="#FEF3C7" stroke="#D97706" stroke-width="4"/><text x="100" y="18" text-anchor="middle" font-weight="bold" fill="#B45309" font-size="11">14 cm</text><text x="160" y="65" font-weight="bold" fill="#B45309" font-size="11">9 cm</text></svg>`
+            },
+            {
+                id: 16,
+                category: "Jajar Genjang",
+                text: "Keliling jajar genjang adalah 60 cm. Jika panjang salah satu sisinya adalah 18 cm, berapakah panjang sisi yang lain?",
+                options: ["14 cm", "12 cm", "15 cm", "16 cm"],
+                answerIndex: 1,
+                explanation: "a + b = Keliling ÷ 2 = 60 ÷ 2 = 30 cm. Sisi lain = 30 - 18 = 12 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="40,25 150,25 130,95 20,95" fill="#EFF6FF" stroke="#3B82F6" stroke-width="4"/><text x="85" y="65" text-anchor="middle" font-weight="bold" fill="#1D4ED8" font-size="11">K = 60 cm, s1 = 18 cm</text></svg>`
+            },
+            {
+                id: 17,
+                category: "Jajar Genjang",
+                text: "Taman berbentuk jajar genjang memiliki alas 20 meter dan sisi miring 15 meter. Jika pengelola taman ingin memagari taman tersebut dengan kawat besi 2 lapis, berapa panjang kawat yang dibutuhkan?",
+                options: ["140 meter", "70 meter", "100 meter", "120 meter"],
+                answerIndex: 0,
+                explanation: "Keliling 1 lapis = 2 × (20 + 15) = 70 m. Untuk 2 lapis = 70 × 2 = 140 meter.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="45,25 165,25 135,95 15,95" fill="#ECFDF5" stroke="#10B981" stroke-width="4"/><text x="105" y="18" text-anchor="middle" font-weight="bold" fill="#047857" font-size="11">20 m</text><text x="160" y="65" font-weight="bold" fill="#047857" font-size="11">15 m</text></svg>`
+            },
+            {
+                id: 18,
+                category: "Jajar Genjang",
+                text: "Sebuah keramik berbentuk jajar genjang memiliki keliling 84 cm. Jika rasio dua sisinya berbeda 6 cm (panjang = 24 cm), berapakah panjang sisi miringnya?",
+                options: ["16 cm", "20 cm", "18 cm", "22 cm"],
+                answerIndex: 2,
+                explanation: "a + b = 84 ÷ 2 = 42 cm. Jika alas = 24 cm, maka sisi miring = 42 - 24 = 18 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="40,25 150,25 130,95 20,95" fill="#F3E8FF" stroke="#8B5CF6" stroke-width="4"/><text x="85" y="65" text-anchor="middle" font-weight="bold" fill="#6D28D9" font-size="11">K = 84 cm</text></svg>`
+            },
+
+            // TRAPESIUM (19 - 22)
+            {
+                id: 19,
+                category: "Trapesium",
+                text: "Sebuah trapesium memiliki panjang sisi-sisi sejajarnya 12 cm dan 20 cm, serta dua sisi miringnya masing-masing 10 cm dan 10 cm. Berapakah keliling trapesium tersebut?",
+                options: ["52 cm", "42 cm", "48 cm", "56 cm"],
+                answerIndex: 0,
+                explanation: "Keliling trapesium = jumlah semua sisi = 12 + 20 + 10 + 10 = 52 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="50,25 130,25 160,95 20,95" fill="#FEE2E2" stroke="#EF4444" stroke-width="4"/><text x="90" y="18" text-anchor="middle" font-weight="bold" fill="#B91C1C" font-size="11">12 cm</text><text x="90" y="112" text-anchor="middle" font-weight="bold" fill="#B91C1C" font-size="11">20 cm</text></svg>`
+            },
+            {
+                id: 20,
+                category: "Trapesium",
+                text: "Atap sebuah bangunan berbentuk trapesium sama kaki dengan sisi sejajar 8 meter dan 14 meter, serta panjang sisi miringnya 6 meter. Berapakah keliling atap tersebut?",
+                options: ["28 meter", "32 meter", "34 meter", "30 meter"],
+                answerIndex: 2,
+                explanation: "Keliling = 8 + 14 + 6 + 6 = 34 meter.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="55,25 125,25 155,95 25,95" fill="#FFEDD5" stroke="#F97316" stroke-width="4"/><text x="90" y="18" text-anchor="middle" font-weight="bold" fill="#C2410C" font-size="11">8 m</text><text x="90" y="112" text-anchor="middle" font-weight="bold" fill="#C2410C" font-size="11">14 m</text></svg>`
+            },
+            {
+                id: 21,
+                category: "Trapesium",
+                text: "Trapesium siku-siku memiliki sisi-sisi sejajar 10 cm dan 16 cm, sisi tegak 8 cm, dan sisi miring 10 cm. Berapakah keliling trapesium siku-siku tersebut?",
+                options: ["44 cm", "40 cm", "38 cm", "42 cm"],
+                answerIndex: 0,
+                explanation: "Keliling = 10 + 16 + 8 + 10 = 44 cm.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="30,25 110,25 150,95 30,95" fill="#E0E7FF" stroke="#6366F1" stroke-width="4"/><text x="70" y="18" text-anchor="middle" font-weight="bold" fill="#4338CA" font-size="11">10 cm</text><text x="90" y="112" text-anchor="middle" font-weight="bold" fill="#4338CA" font-size="11">16 cm</text></svg>`
+            },
+            {
+                id: 22,
+                category: "Trapesium",
+                text: "Sebuah taman berbentuk trapesium sembarang memiliki sisi-sisi sepanjang 15 m, 22 m, 13 m, dan 10 m. Berapakah keliling taman tersebut?",
+                options: ["58 meter", "60 meter", "55 meter", "62 meter"],
+                answerIndex: 1,
+                explanation: "Keliling = 15 + 22 + 13 + 10 = 60 meter.",
+                svg: `<svg viewBox="0 0 180 120" width="180" height="120"><polygon points="40,30 130,25 160,95 15,95" fill="#FEF9C3" stroke="#CA8A04" stroke-width="4"/><text x="85" y="65" text-anchor="middle" font-weight="bold" fill="#854D0E" font-size="11">Trapesium Sembarang</text></svg>`
+            },
+
+            // BELAH KETUPAT (23 - 26)
+            {
+                id: 23,
+                category: "Belah Ketupat",
+                text: "Sebuah hiasan dinding berbentuk belah ketupat memiliki panjang sisi 15 cm. Berapakah keliling hiasan dinding tersebut?",
+                options: ["45 cm", "75 cm", "60 cm", "50 cm"],
+                answerIndex: 2,
+                explanation: "Belah ketupat memiliki 4 sisi sama panjang. Keliling = 4 × 15 = 60 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,15 140,80 80,145 20,80" fill="#FFE4E6" stroke="#E11D48" stroke-width="4"/><text x="120" y="45" font-weight="bold" fill="#BE123C" font-size="11">15 cm</text></svg>`
+            },
+            {
+                id: 24,
+                category: "Belah Ketupat",
+                text: "Keliling belah ketupat adalah 100 cm. Berapakah panjang satu sisinya?",
+                options: ["20 cm", "25 cm", "30 cm", "35 cm"],
+                answerIndex: 1,
+                explanation: "Panjang sisi = Keliling ÷ 4 = 100 ÷ 4 = 25 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,20 135,80 80,140 25,80" fill="#CCFBF1" stroke="#0D9488" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#0F766E" font-size="11">K = 100 cm</text></svg>`
+            },
+            {
+                id: 25,
+                category: "Belah Ketupat",
+                text: "Pak Budi membuat rangka ketupat raksasa dari kawat dengan panjang sisi 45 cm. Berapa total panjang kawat yang dibutuhkan untuk 2 buah rangka ketupat?",
+                options: ["360 cm", "180 cm", "270 cm", "320 cm"],
+                answerIndex: 0,
+                explanation: "Keliling 1 ketupat = 4 × 45 = 180 cm. Untuk 2 ketupat = 180 × 2 = 360 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,15 140,80 80,145 20,80" fill="#F0FDF4" stroke="#16A34A" stroke-width="4"/><text x="115" y="45" font-weight="bold" fill="#15803D" font-size="11">45 cm</text></svg>`
+            },
+            {
+                id: 26,
+                category: "Belah Ketupat",
+                text: "Sebuah taman berbentuk belah ketupat dengan sisi 12 meter dikelilingi oleh pagar kayu. Jika setiap 3 meter dipasang tiang penopang, berapa jumlah tiang yang dibutuhkan?",
+                options: ["12 tiang", "18 tiang", "16 tiang", "20 tiang"],
+                answerIndex: 2,
+                explanation: "Keliling = 4 × 12 = 48 meter. Jumlah tiang = 48 ÷ 3 = 16 tiang.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,20 135,80 80,140 25,80" fill="#FEF3C7" stroke="#D97706" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#92400E" font-size="11">s = 12 m</text></svg>`
+            },
+
+            // LAYANG-LAYANG (27 - 30)
+            {
+                id: 27,
+                category: "Layang-Layang",
+                text: "Layang-layang buatan Rudi memiliki panjang pasangan sisi pendek 12 cm dan pasangan sisi panjang 18 cm. Berapakah keliling layang-layang tersebut?",
+                options: ["60 cm", "50 cm", "72 cm", "54 cm"],
+                answerIndex: 0,
+                explanation: "Keliling layang-layang = 2 × (sisi pendek + sisi panjang) = 2 × (12 + 18) = 2 × 30 = 60 cm.",
+                svg: `<svg viewBox="0 0 160 170" width="160" height="170"><polygon points="80,15 135,60 80,155 25,60" fill="#F3E8FF" stroke="#9333EA" stroke-width="4"/><text x="118" y="38" font-weight="bold" fill="#6B21A8" font-size="10">12 cm</text><text x="120" y="110" font-weight="bold" fill="#6B21A8" font-size="10">18 cm</text></svg>`
+            },
+            {
+                id: 28,
+                category: "Layang-Layang",
+                text: "Keliling sebuah layang-layang adalah 80 cm. Jika panjang sisi terpanjangnya adalah 25 cm, berapakah panjang sisi terpendeknya?",
+                options: ["18 cm", "15 cm", "20 cm", "12 cm"],
+                answerIndex: 1,
+                explanation: "s1 + s2 = Keliling ÷ 2 = 80 ÷ 2 = 40 cm. Sisi pendek = 40 - 25 = 15 cm.",
+                svg: `<svg viewBox="0 0 160 170" width="160" height="170"><polygon points="80,15 130,60 80,155 30,60" fill="#E0F2FE" stroke="#0284C7" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#0369A1" font-size="11">K = 80 cm</text></svg>`
+            },
+            {
+                id: 29,
+                category: "Layang-Layang",
+                text: "Eka membuat layang-layang hias dengan pasangan sisi 15 cm dan 22 cm. Ia menempelkan pita emas di sekeliling layang-layang tersebut. Berapa cm panjang pita emas yang dibutuhkan?",
+                options: ["80 cm", "74 cm", "68 cm", "70 cm"],
+                answerIndex: 1,
+                explanation: "Keliling = 2 × (15 + 22) = 2 × 37 = 74 cm.",
+                svg: `<svg viewBox="0 0 160 170" width="160" height="170"><polygon points="80,15 135,60 80,155 25,60" fill="#FEF2F2" stroke="#EF4444" stroke-width="4"/><text x="118" y="38" font-weight="bold" fill="#B91C1C" font-size="10">15 cm</text><text x="120" y="110" font-weight="bold" fill="#B91C1C" font-size="10">22 cm</text></svg>`
+            },
+            {
+                id: 30,
+                category: "Layang-Layang",
+                text: "Dua buah layang-layang identik memiliki panjang sisi 10 cm dan 16 cm. Berapakah total keliling dari kedua layang-layang tersebut?",
+                options: ["104 cm", "96 cm", "112 cm", "52 cm"],
+                answerIndex: 0,
+                explanation: "Keliling 1 layang-layang = 2 × (10 + 16) = 52 cm. Total 2 layang-layang = 52 × 2 = 104 cm.",
+                svg: `<svg viewBox="0 0 160 170" width="160" height="170"><polygon points="80,15 130,60 80,155 30,60" fill="#ECFDF5" stroke="#10B981" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#047857" font-size="11">10 cm & 16 cm</text></svg>`
+            },
+
+            // POLIGON / SEGI BANYAK BERATURAN (31 - 35)
+            {
+                id: 31,
+                category: "Segi Banyak Beraturan",
+                text: "Sebuah panggung berbentuk segi lima beraturan (pentagon) memiliki panjang sisi 8 meter. Berapakah keliling panggung tersebut?",
+                options: ["48 meter", "32 meter", "40 meter", "35 meter"],
+                answerIndex: 2,
+                explanation: "Keliling segi-5 beraturan = 5 × s = 5 × 8 = 40 meter.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,15 145,60 120,135 40,135 15,60" fill="#CFFAFE" stroke="#0891B2" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#0E7490" font-size="12">8 m (Segi-5)</text></svg>`
+            },
+            {
+                id: 32,
+                category: "Segi Banyak Beraturan",
+                text: "Sebuah gazebo berbentuk segi enam beraturan (heksagon) memiliki keliling 72 meter. Berapakah panjang satu sisinya?",
+                options: ["12 meter", "14 meter", "10 meter", "16 meter"],
+                answerIndex: 0,
+                explanation: "Sisi segi-6 beraturan = Keliling ÷ 6 = 72 ÷ 6 = 12 meter.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="80,15 135,45 135,115 80,145 25,115 25,45" fill="#FDF4FF" stroke="#C084FC" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#7E22CE" font-size="11">K = 72 m (Segi-6)</text></svg>`
+            },
+            {
+                id: 33,
+                category: "Segi Banyak Beraturan",
+                text: "Taman kota berbentuk segi delapan beraturan (oktagon) memiliki panjang sisi 15 meter. Berapakah keliling total taman tersebut?",
+                options: ["100 meter", "120 meter", "140 meter", "110 meter"],
+                answerIndex: 1,
+                explanation: "Keliling segi-8 beraturan = 8 × s = 8 × 15 = 120 meter.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="50,15 110,15 145,50 145,110 110,145 50,145 15,110 15,50" fill="#FEF2F2" stroke="#F87171" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#B91C1C" font-size="11">15 m (Segi-8)</text></svg>`
+            },
+            {
+                id: 34,
+                category: "Segi Banyak Beraturan",
+                text: "Rambu lalu lintas berbentuk segi delapan beraturan dipasang lis perak. Jika panjang tiap sisi rambu adalah 20 cm, berapa panjang lis perak yang dibutuhkan?",
+                options: ["160 cm", "140 cm", "180 cm", "120 cm"],
+                answerIndex: 0,
+                explanation: "Keliling segi-8 = 8 × 20 cm = 160 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><polygon points="50,15 110,15 145,50 145,110 110,145 50,145 15,110 15,50" fill="#DC2626" stroke="#FFFFFF" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#FFFFFF" font-size="12">STOP</text></svg>`
+            },
+            {
+                id: 35,
+                category: "Segi Banyak Beraturan",
+                text: "Keliling piring dekoratif berbentuk segi sepuluh beraturan (dekagon) adalah 150 cm. Berapakah panjang masing-masing sisinya?",
+                options: ["12 cm", "18 cm", "15 cm", "20 cm"],
+                answerIndex: 2,
+                explanation: "Sisi segi-10 = Keliling ÷ 10 = 150 ÷ 10 = 15 cm.",
+                svg: `<svg viewBox="0 0 160 160" width="160" height="160"><circle cx="80" cy="80" r="65" fill="#EFF6FF" stroke="#3B82F6" stroke-width="4"/><text x="80" y="85" text-anchor="middle" font-weight="bold" fill="#1D4ED8" font-size="11">K = 150 cm (Segi-10)</text></svg>`
+            },
+
+            // BANGUN GABUNGAN / TAK BERATURAN (36 - 40)
+            {
+                id: 36,
+                category: "Bangun Gabungan",
+                text: "Sawah Pak Tono berbentuk huruf 'L' dengan sisi-sisi luar berurutan sepanjang: 12 m, 4 m, 6 m, 4 m, 6 m, dan 8 m. Berapakah keliling total sawah tersebut?",
+                options: ["36 meter", "40 meter", "44 meter", "48 meter"],
+                answerIndex: 1,
+                explanation: "Keliling bangun tak beraturan = jumlahkan seluruh sisi luar = 12 + 4 + 6 + 4 + 6 + 8 = 40 meter.",
+                svg: `<svg viewBox="0 0 180 140" width="180" height="140"><path d="M 20,20 L 140,20 L 140,60 L 70,60 L 70,120 L 20,120 Z" fill="#DCFCE7" stroke="#16A34A" stroke-width="4"/><text x="80" y="15" font-weight="bold" fill="#15803D" font-size="10">12m</text><text x="148" y="45" font-weight="bold" fill="#15803D" font-size="10">4m</text><text x="45" y="132" font-weight="bold" fill="#15803D" font-size="10">8m</text></svg>`
+            },
+            {
+                id: 37,
+                category: "Bangun Gabungan",
+                text: "Sebuah lapangan gabungan terdiri dari persegi (sisi 10 m) yang berdempetan dengan segitiga sama sisi di salah satu sisinya. Berapakah keliling bagian luar bangun gabungan tersebut?",
+                options: ["50 meter", "40 meter", "60 meter", "45 meter"],
+                answerIndex: 0,
+                explanation: "Terdiri dari 3 sisi persegi luar (3 × 10m) + 2 sisi segitiga luar (2 × 10m) = 30 + 20 = 50 meter. Sisi himpitan di dalam tidak dihitung.",
+                svg: `<svg viewBox="0 0 180 140" width="180" height="140"><rect x="20" y="40" width="70" height="70" fill="#E0F2FE" stroke="#0284C7" stroke-width="4"/><polygon points="90,40 150,75 90,110" fill="#FEF3C7" stroke="#D97706" stroke-width="4"/><text x="55" y="80" text-anchor="middle" font-weight="bold" fill="#0369A1" font-size="10">10m</text></svg>`
+            },
+            {
+                id: 38,
+                category: "Bangun Gabungan",
+                text: "Bangun datar gabungan berbentuk tangga memiliki 3 tingkatan horizontal (masing-masing 5 cm) dan 3 tingkatan vertikal (masing-masing 4 cm), serta sisi bawah 15 cm dan sisi tegak kiri 12 cm. Berapakah kelilingnya?",
+                options: ["54 cm", "60 cm", "48 cm", "50 cm"],
+                answerIndex: 0,
+                explanation: "Sisi luar = (3×5) + (3×4) + 15 + 12 = 15 + 12 + 15 + 12 = 54 cm.",
+                svg: `<svg viewBox="0 0 180 140" width="180" height="140"><path d="M 20,20 L 20,120 L 150,120 L 150,90 L 110,90 L 110,60 L 60,60 L 60,20 Z" fill="#F3E8FF" stroke="#7C3AED" stroke-width="4"/><text x="85" y="135" text-anchor="middle" font-weight="bold" fill="#6D28D9" font-size="10">15 cm</text></svg>`
+            },
+            {
+                id: 39,
+                category: "Bangun Gabungan",
+                text: "Sebuah kolam hias berbentuk gabungan dua persegi panjang yang membentuk huruf 'T'. Jika panjang garis keliling luar total setelah diukur satu per satu adalah 64 meter, berapa biaya pembuatan pembatas tepi jika harga per meternya Rp15.000?",
+                options: ["Rp860.000", "Rp960.000", "Rp1.020.000", "Rp900.000"],
+                answerIndex: 1,
+                explanation: "Total biaya = Keliling × Harga = 64m × Rp15.000 = Rp960.000.",
+                svg: `<svg viewBox="0 0 180 140" width="180" height="140"><path d="M 20,20 L 160,20 L 160,50 L 110,50 L 110,120 L 70,120 L 70,50 L 20,50 Z" fill="#ECFDF5" stroke="#059669" stroke-width="4"/><text x="90" y="80" text-anchor="middle" font-weight="bold" fill="#047857" font-size="10">K = 64 m</text></svg>`
+            },
+            {
+                id: 40,
+                category: "Bangun Gabungan",
+                text: "Sebuah taman gabungan berbentuk rumah (persegi panjang 12 m × 8 m ditumpuk segitiga sama kaki tinggi sisi miring 10 m di atas sisi 12 m). Berapakah keliling total sisi luar taman tersebut?",
+                options: ["56 meter", "48 meter", "44 meter", "52 meter"],
+                answerIndex: 3,
+                explanation: "Keliling luar = 2 sisi tegak persegi panjang (8m + 8m) + 1 sisi bawah (12m) + 2 sisi miring atap segitiga (10m + 10m) = 8 + 8 + 12 + 10 + 10 = 52 meter.",
+                svg: `<svg viewBox="0 0 180 140" width="180" height="140"><polygon points="90,15 30,60 150,60" fill="#FEF2F2" stroke="#EF4444" stroke-width="4"/><rect x="30" y="60" width="120" height="60" fill="#EFF6FF" stroke="#2563EB" stroke-width="4"/><text x="90" y="95" text-anchor="middle" font-weight="bold" fill="#1D4ED8" font-size="10">12m x 8m (Atap = 10m)</text></svg>`
+            }
+        ];
+
+        // State Management
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionId: chosenIndex }
+
+        // Load & Save State (Local Storage)
+        function loadSavedState() {
+            const saved = localStorage.getItem('quiz_keliling_answers');
+            if (saved) {
+                try {
+                    userAnswers = JSON.parse(saved);
+                } catch (e) {
+                    userAnswers = {};
+                }
+            }
+            const savedIndex = localStorage.getItem('quiz_keliling_index');
+            if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex) || 0;
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('quiz_keliling_answers', JSON.stringify(userAnswers));
+            localStorage.setItem('quiz_keliling_index', currentIndex.toString());
+        }
+
+        function resetQuizProgress() {
+            if (confirm("Apakah Anda yakin ingin mengulang seluruh kuis dari awal? Jawaban Anda akan dihapus.")) {
+                localStorage.removeItem('quiz_keliling_answers');
+                localStorage.removeItem('quiz_keliling_index');
+                userAnswers = {};
+                currentIndex = 0;
+                initQuiz();
+            }
+        }
+
+        // Render Sidebar Navigation Grid
+        function renderGrid() {
+            const gridContainer = document.getElementById('questions-grid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.innerText = idx + 1;
+                
+                let classes = "w-9 h-9 rounded-xl font-bold text-xs flex items-center justify-center border transition-all ";
+                
+                if (idx === currentIndex) {
+                    classes += "ring-2 ring-amber-400 border-indigo-600 ";
+                }
+
+                if (userAnswers.hasOwnProperty(q.id)) {
+                    const isCorrect = userAnswers[q.id] === q.answerIndex;
+                    if (isCorrect) {
+                        classes += "bg-emerald-500 text-white border-emerald-600";
+                    } else {
+                        classes += "bg-rose-500 text-white border-rose-600";
+                    }
+                } else {
+                    classes += "bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200";
+                }
+
+                btn.className = classes;
+                btn.onclick = () => {
+                    currentIndex = idx;
+                    saveState();
+                    renderQuestion();
+                    renderGrid();
+                };
+                gridContainer.appendChild(btn);
+            });
+
+            // Update Progress Counts
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('progress-count').innerText = `${answeredCount} / 40 Terjawab`;
+
+            // Calculate Score
+            let correctCount = 0;
+            questionsData.forEach(q => {
+                if (userAnswers[q.id] === q.answerIndex) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('current-score').innerText = `${correctCount} / 40`;
+            const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            document.getElementById('accuracy-percentage').innerText = `${accuracy}% Akurasi`;
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            const q = questionsData[currentIndex];
+
+            // Category & Header Title
+            document.getElementById('q-category').innerText = q.category;
+            document.getElementById('q-number-title').innerText = `Soal ${currentIndex + 1} dari 40`;
+
+            // SVG & Question Text
+            document.getElementById('q-svg-container').innerHTML = q.svg;
+            document.getElementById('q-text').innerText = q.text;
+
+            // Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const isAnswered = userAnswers.hasOwnProperty(q.id);
+            const chosenIndex = userAnswers[q.id];
+
+            const optionLabels = ["A", "B", "C", "D"];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                let btnClasses = "p-4 rounded-2xl text-left border flex items-center justify-between transition-all ";
+
+                if (!isAnswered) {
+                    btnClasses += "bg-white hover:bg-indigo-50 border-slate-200 text-slate-700 hover:border-indigo-300";
+                    btn.onclick = () => selectOption(optIdx);
+                } else {
+                    btn.disabled = true;
+                    if (optIdx === q.answerIndex) {
+                        btnClasses += "bg-emerald-100 border-emerald-400 text-emerald-900 font-bold";
+                    } else if (optIdx === chosenIndex) {
+                        btnClasses += "bg-rose-100 border-rose-400 text-rose-900 font-bold";
+                    } else {
+                        btnClasses += "bg-slate-50 border-slate-200 text-slate-400 opacity-60";
+                    }
+                }
+
+                btn.className = btnClasses;
+                
+                let iconHTML = '';
+                if (isAnswered) {
+                    if (optIdx === q.answerIndex) {
+                        iconHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>`;
+                    } else if (optIdx === chosenIndex) {
+                        iconHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i>`;
+                    }
+                }
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">${optionLabels[optIdx]}</span>
+                        <span>${optText}</span>
+                    </div>
+                    ${iconHTML}
+                `;
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            if (isAnswered) {
+                feedbackBox.classList.remove('hidden');
+                const isCorrect = chosenIndex === q.answerIndex;
+                if (isCorrect) {
+                    feedbackBox.className = "mt-6 p-4 rounded-2xl text-sm font-semibold border bg-emerald-50 border-emerald-200 text-emerald-800";
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="text-emerald-900">Jawabanmu Benar!</strong>
+                                <p class="text-xs font-normal mt-1 text-emerald-700">${q.explanation}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    feedbackBox.className = "mt-6 p-4 rounded-2xl text-sm font-semibold border bg-rose-50 border-rose-200 text-rose-800";
+                    feedbackBox.innerHTML = `
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-xmark text-rose-600 text-lg mt-0.5"></i>
+                            <div>
+                                <strong class="text-rose-900">Jawaban Kurang Tepat.</strong>
+                                <p class="text-xs font-normal mt-1 text-rose-700">${q.explanation}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                feedbackBox.classList.add('hidden');
+            }
+
+            // Prev / Next Buttons State
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-next').disabled = currentIndex === questionsData.length - 1;
+        }
+
+        // Handle Option Click
+        function selectOption(optIndex) {
+            const q = questionsData[currentIndex];
+            userAnswers[q.id] = optIndex;
+            saveState();
+            renderQuestion();
+            renderGrid();
+        }
+
+        // Navigation
+        function navigateQuestion(dir) {
+            currentIndex += dir;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= questionsData.length) currentIndex = questionsData.length - 1;
+            saveState();
+            renderQuestion();
+            renderGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initial Load
+        function initQuiz() {
+            loadSavedState();
+            renderQuestion();
+            renderGrid();
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
